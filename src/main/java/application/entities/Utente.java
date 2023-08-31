@@ -11,11 +11,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import application.entities.enums.UtenteRuoli;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -24,7 +26,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @JsonIgnoreProperties({ "password", "accountNonExpired", "accountNonLocked", "enabled", "credentialsNonExpired",
-		"authorities" })
+		"authorities", "richiesteEffettuate" })
 public class Utente implements UserDetails {
 	@Id
 	@GeneratedValue
@@ -34,6 +36,7 @@ public class Utente implements UserDetails {
 	private String nome;
 	private String cognome;
 	private String username;
+	private String telefono;
 
 	@Enumerated(EnumType.STRING)
 	private UtenteRuoli ruolo = UtenteRuoli.USER;
@@ -41,6 +44,9 @@ public class Utente implements UserDetails {
 	private boolean isCredentialsNonExpired;
 	private boolean isAccountNonExpired;
 	private boolean isAccountNonLocked;
+
+	@OneToMany(mappedBy = "utenteRichiedente", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<RichiesteNoleggio> richiesteEffettuate;
 
 	// costruttore
 	public Utente(String email, String password, String nome, String cognome, String username) {
