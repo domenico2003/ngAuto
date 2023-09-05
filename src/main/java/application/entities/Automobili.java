@@ -37,7 +37,7 @@ public class Automobili {
 
 	@Enumerated(EnumType.STRING)
 	private Status stato;
-	private String condizione;// nuova o usata
+	private String condizione;// nuova o usata o noleggio
 	@Column(length = 500)
 	private String colore;
 	private long km;
@@ -54,13 +54,12 @@ public class Automobili {
 	@Column(length = 1500)
 	private String note;
 
-	public Automobili(Alimentazione alimentazione, Cambio cambio, List<ImmaginiAutomobili> foto, Status stato,
-			String condizione, String colore, long km, String carrozzeria, long cilindrata, int potenza_cv,
-			ImmaginiAutomobili copertina, String note) {
+	public Automobili(Alimentazione alimentazione, Cambio cambio, Status stato, String condizione, String colore,
+			long km, String carrozzeria, long cilindrata, int potenza_cv, ImmaginiAutomobili copertina, String note) {
 
 		this.alimentazione = alimentazione;
 		this.cambio = cambio;
-		this.foto = foto;
+
 		this.stato = stato;
 		this.condizione = condizione;
 		this.colore = colore;

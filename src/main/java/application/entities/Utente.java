@@ -49,7 +49,7 @@ public class Utente implements UserDetails {
 	private List<RichiesteNoleggio> richiesteEffettuate;
 
 	// costruttore
-	public Utente(String email, String password, String nome, String cognome, String username) {
+	public Utente(String email, String password, String nome, String cognome, String username, String tel) {
 		super();
 		this.email = email;
 		this.password = password;
@@ -60,6 +60,7 @@ public class Utente implements UserDetails {
 		this.isCredentialsNonExpired = true;
 		this.isAccountNonExpired = true;
 		this.isAccountNonLocked = true;
+		this.telefono = tel;
 	}
 
 	// metodi

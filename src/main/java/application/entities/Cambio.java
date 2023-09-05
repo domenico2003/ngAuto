@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @NoArgsConstructor
-@JsonIgnoreProperties({})
+@JsonIgnoreProperties({ "id" })
 public class Cambio {
 
 	@Id

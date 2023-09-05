@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @NoArgsConstructor
-@JsonIgnoreProperties({ "id", "auto" })
+@JsonIgnoreProperties({ "auto" })
 public class ImmaginiAutomobili {
 	@Id
 	private UUID id;
@@ -22,4 +22,12 @@ public class ImmaginiAutomobili {
 
 	@ManyToOne
 	private Automobili auto;
+
+	public ImmaginiAutomobili(String url, String idEliminazione, Automobili auto) {
+
+		this.url = url;
+		this.idEliminazione = idEliminazione;
+		this.auto = auto;
+	}
+
 }
