@@ -8,6 +8,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
@@ -18,13 +19,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RichiesteNoleggio {
 	@Id
+	@GeneratedValue
 	private UUID id;
 
 	@ManyToOne
-	private Utente utenteRichiedente;
+	private Utente utente;
 
 	private LocalDate daData;
-	private LocalDate aData;
+	private LocalDate finoA;
 
 	@ManyToOne
 	private Automobili autoRichiesta;
@@ -39,9 +41,9 @@ public class RichiesteNoleggio {
 
 	public RichiesteNoleggio(Utente utenteRichiedente, LocalDate daData, LocalDate aData, Automobili autoRichiesta) {
 		super();
-		this.utenteRichiedente = utenteRichiedente;
+		this.utente = utenteRichiedente;
 		this.daData = daData;
-		this.aData = aData;
+		this.finoA = aData;
 		this.autoRichiesta = autoRichiesta;
 	}
 

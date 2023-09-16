@@ -54,11 +54,38 @@ public class AutoService {
 				.orElseThrow(() -> new NotFoundException("alimentazione " + tipo + " non trovata!"));
 	}
 
+	public List<Alimentazione> findAllAlimentazioni() {
+
+		return aliRepo.findAll();
+	}
+
+	public List<Cambio> findAllCambio() {
+
+		return cambioRepo.findAll();
+	}
+
 	// metodi immagini
+
+	public void deleteImg(String id) {
+
+		imgDBService.deleteImg(id);
+	}
+
+	public List<ImmaginiAutomobili> immaginiPerAuto(String idAuto) {
+
+		return imgDBService.immaginiPerAuto(idAuto);
+	}
 
 	public ImmaginiAutomobili salvaImmagini(MultipartFile file, String autoId) throws IOException {
 		ImagePayload immaggineSalvata = imageService.uploadImage(file);
 		return imgDBService.addImmagine(immaggineSalvata, this.findById(autoId));
+	}
+
+	public Automobili aggiungiCopertina(String idImagine, String autoId) throws IOException {
+		ImmaginiAutomobili copertina = imgDBService.findById(idImagine);
+		Automobili auto = this.findById(autoId);
+		auto.setCopertina(copertina);
+		return autoRepo.save(auto);
 	}
 
 	public void deleteImgAuto(String idAuto) {
@@ -76,14 +103,9 @@ public class AutoService {
 	}
 
 	public Automobili create(AutoPayload body) throws IOException {
-		Automobili auto = autoRepo.save(new Automobili());
 
-		ImmaginiAutomobili copertina = this.salvaImmagini(body.getCopertina(), auto.getId().toString());
+		Automobili autoDaSalvare = new Automobili();
 
-		Automobili autoDaSalvare = this.findById(auto.getId().toString());
-		ImmaginiAutomobili copertinaSalvabile = imgDBService.findById(copertina.getId().toString());
-
-		autoDaSalvare.setCopertina(copertinaSalvabile);
 		autoDaSalvare.setAlimentazione(this.findAlimentazioneByNome(body.getTipoAlimentazione()));
 		autoDaSalvare.setCambio(this.findCambioByNome(body.getTipoCambio()));
 		autoDaSalvare.setCondizione(body.getCondizione());
@@ -136,7 +158,7 @@ public class AutoService {
 	public void findByIdAndDelete(String id) {
 		this.deleteImgAuto(id);
 		Automobili auto = this.findById(id);
-		imageService.deleteImage(auto.getCopertina().getIdEliminazione());
+
 		autoRepo.delete(auto);
 
 	}
@@ -166,5 +188,27 @@ public class AutoService {
 		Pageable pagina = PageRequest.of(page, 10, Sort.by(ordinamento));
 
 		return autoRepo.findByColoreStartingWithIgnoreCase(pagina, colore);
+	};
+
+	public Page<Automobili> findAutoByCustomFilters(int page, String ordinamento, String tipoAlimentazione,
+			String tipoCambio, String condizione, String colore) {
+		Pageable pagina = PageRequest.of(page, 10, Sort.by(ordinamento));
+
+		if (tipoCambio != null & tipoAlimentazione != null) {
+			Cambio CambioTrovato = this.findCambioByNome(tipoCambio);
+			Alimentazione alimentazioneRichiesta = this.findAlimentazioneByNome(tipoAlimentazione);
+			return autoRepo.findRichiestaByCustomFilters(pagina, alimentazioneRichiesta, CambioTrovato, condizione,
+					colore);
+		} else if (tipoCambio == null & tipoAlimentazione != null) {
+
+			Alimentazione alimentazioneRichiesta = this.findAlimentazioneByNome(tipoAlimentazione);
+			return autoRepo.findRichiestaByCustomFilters(pagina, alimentazioneRichiesta, null, condizione, colore);
+		} else if (tipoCambio != null & tipoAlimentazione == null) {
+
+			Cambio CambioTrovato = this.findCambioByNome(tipoCambio);
+			return autoRepo.findRichiestaByCustomFilters(pagina, null, CambioTrovato, condizione, colore);
+		} else {
+			return autoRepo.findRichiestaByCustomFilters(pagina, null, null, condizione, colore);
+		}
 	};
 }

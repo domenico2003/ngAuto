@@ -11,6 +11,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -23,7 +24,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonIgnoreProperties({ "richiesteNoleggio" })
 public class Automobili {
+
 	@Id
+	@GeneratedValue
 	private UUID id;
 
 	@ManyToOne
@@ -55,7 +58,7 @@ public class Automobili {
 	private String note;
 
 	public Automobili(Alimentazione alimentazione, Cambio cambio, Status stato, String condizione, String colore,
-			long km, String carrozzeria, long cilindrata, int potenza_cv, ImmaginiAutomobili copertina, String note) {
+			long km, String carrozzeria, long cilindrata, int potenza_cv, String note) {
 
 		this.alimentazione = alimentazione;
 		this.cambio = cambio;
@@ -67,7 +70,7 @@ public class Automobili {
 		this.carrozzeria = carrozzeria;
 		this.cilindrata = cilindrata;
 		this.potenza_cv = potenza_cv;
-		this.copertina = copertina;
+//		this.copertina = copertina;
 		this.note = note;
 	}
 

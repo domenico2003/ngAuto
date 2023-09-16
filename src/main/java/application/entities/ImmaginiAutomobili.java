@@ -5,6 +5,7 @@ import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties({ "auto" })
 public class ImmaginiAutomobili {
 	@Id
+	@GeneratedValue
 	private UUID id;
 	private String url;
 	private String idEliminazione;

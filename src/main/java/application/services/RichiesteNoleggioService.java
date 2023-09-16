@@ -61,7 +61,7 @@ public class RichiesteNoleggioService {
 		RichiesteNoleggio Richiesta = this.findById(id);
 
 		Richiesta.setDaData(body.getDaData());
-		Richiesta.setAData(body.getAData());
+		Richiesta.setFinoA(body.getAData());
 		Richiesta.setAutoRichiesta(auser.findById(body.getIdAutoRichiesta()));
 
 		return ricNolRepo.save(Richiesta);
@@ -88,7 +88,7 @@ public class RichiesteNoleggioService {
 
 		Utente utenteRichiedente = us.findById(idUtenteRichiedente);
 
-		return ricNolRepo.findByUtenteRichiedente(pagina, utenteRichiedente);
+		return ricNolRepo.findByUtente(pagina, utenteRichiedente);
 	};
 
 	public Page<RichiesteNoleggio> findByAutoRichiesta(int page, String ordinamento, String idAutoRichiesta) {
@@ -106,7 +106,130 @@ public class RichiesteNoleggioService {
 
 	public Page<RichiesteNoleggio> findByDaData(int page, String ordinamento, LocalDate daData) {
 		Pageable pagina = PageRequest.of(page, 10, Sort.by(ordinamento));
-		return ricNolRepo.findByDaData(pagina, daData);
+		return ricNolRepo.findByDaDataGreaterThanEqual(pagina, daData);
 	};
 
+	// filtro
+	public Page<RichiesteNoleggio> findRichiestaByCustomFilters(int page, String ordinamento,
+			String idUtenteRichiedente, String idAutoRichiesta, LocalDate daData, LocalDate aData) {
+//		Utente utenteRichiedente = null;
+//		Automobili autoRichiesta = null;
+
+		Pageable pagina = PageRequest.of(page, 10, Sort.by(ordinamento));
+
+		// utente
+		if (idUtenteRichiedente != null && idAutoRichiesta == null && daData == null && aData == null) {
+			return this.findByUtenteRichiedente(page, ordinamento, idUtenteRichiedente);
+		}
+
+		// auto
+		else if (idAutoRichiesta != null && idUtenteRichiedente == null && daData == null && aData == null) {
+			return this.findByAutoRichiesta(page, ordinamento, idAutoRichiesta);
+		}
+
+		// da
+		else if (daData != null && idUtenteRichiedente == null && idAutoRichiesta == null && aData == null) {
+			return this.findByDaData(page, ordinamento, daData);
+		}
+
+		// a
+		else if (daData == null && idUtenteRichiedente == null && idAutoRichiesta == null && aData != null) {
+			return ricNolRepo.findAllByFinoALessThanEqual(pagina, aData);
+		}
+
+		// da - a
+		else if (daData != null && aData != null && idUtenteRichiedente == null && idAutoRichiesta == null) {
+			return this.findByDaDataBetween(page, ordinamento, daData, aData);
+		}
+
+		// utente - auto
+		else if (idUtenteRichiedente != null && idAutoRichiesta != null && daData == null && aData == null) {
+
+			return ricNolRepo.findByUtenteAndAutoRichiesta(pagina, us.findById(idUtenteRichiedente),
+					auser.findById(idAutoRichiesta));
+		}
+
+		// utente - auto - da
+		else if (idAutoRichiesta != null && idUtenteRichiedente != null && daData != null && aData == null) {
+
+			return ricNolRepo.findAllByUtenteAndAutoRichiestaAndDaDataGreaterThanEqual(pagina,
+					us.findById(idUtenteRichiedente), auser.findById(idAutoRichiesta), daData);
+		}
+
+		// utente - auto - a
+		else if (idAutoRichiesta != null && idUtenteRichiedente != null && daData == null && aData != null) {
+
+			return ricNolRepo.findAllByUtenteAndAutoRichiestaAndFinoALessThanEqual(pagina,
+					us.findById(idUtenteRichiedente), auser.findById(idAutoRichiesta), aData);
+		}
+
+		// utente - auto - da - a
+		else if (daData != null && idUtenteRichiedente != null && idAutoRichiesta != null && aData != null) {
+
+			return ricNolRepo.findAllByUtenteAndAutoRichiestaAndDaDataGreaterThanEqualAndFinoALessThanEqual(pagina,
+					us.findById(idUtenteRichiedente), auser.findById(idAutoRichiesta), daData, aData);
+		}
+
+		// tutti
+		else if (daData == null && aData == null && idUtenteRichiedente == null && idAutoRichiesta == null) {
+			return this.findAll(page, ordinamento);
+		}
+
+		// utente - da
+		else if (idUtenteRichiedente != null && idAutoRichiesta == null && daData != null && aData == null) {
+
+			return ricNolRepo.findAllByUtenteAndDaDataGreaterThanEqual(pagina, us.findById(idUtenteRichiedente),
+					daData);
+		}
+
+		// utente - a
+		else if (idUtenteRichiedente != null && idAutoRichiesta == null && daData == null && aData != null) {
+
+			return ricNolRepo.findAllByUtenteAndFinoALessThanEqual(pagina, us.findById(idUtenteRichiedente), aData);
+		}
+
+		// utente - da - a
+		else if (idAutoRichiesta == null && idUtenteRichiedente != null && daData != null && aData != null) {
+			// da fare
+			return ricNolRepo.findAllByUtenteAndDaDataGreaterThanEqualAndFinoALessThanEqual(pagina,
+					us.findById(idUtenteRichiedente), daData, aData);
+		}
+
+		// auto - da
+		else if (daData != null && idUtenteRichiedente == null && idAutoRichiesta != null && aData == null) {
+			// da fare
+			return ricNolRepo.findAllByAutoRichiestaAndDaDataGreaterThanEqual(pagina, auser.findById(idAutoRichiesta),
+					daData);
+		}
+
+		// auto - a
+		else if (daData == null && idUtenteRichiedente == null && idAutoRichiesta != null && aData != null) {
+			// da fare
+			return ricNolRepo.findAllByAutoRichiestaAndFinoALessThanEqual(pagina, auser.findById(idAutoRichiesta),
+					aData);
+		}
+
+		// auto - da - a
+		else if (daData != null && aData != null && idUtenteRichiedente == null && idAutoRichiesta != null) {
+			// da fare
+			return ricNolRepo.findAllByAutoRichiestaAndDaDataGreaterThanEqualAndFinoALessThanEqual(pagina,
+					auser.findById(idAutoRichiesta), daData, aData);
+		}
+
+		else {
+			throw new BadRequestException("La richiesta effettueta non si può eseguire");
+		}
+
+//		return ricNolRepo.findRichiestaByCustomFilters(pagina, utenteRichiedente, autoRichiesta, daData, aData);
+
+	};
+//		String daDataStringa = null;
+//		String aDataStringa = null;
+//		if (daData != null) {
+//			daDataStringa = daData.toString();
+//
+//		}
+//		if (aData != null) {
+//			aDataStringa = aData.toString();
+//		}
 }

@@ -19,7 +19,8 @@ public class ImgDbAutoService {
 
 	@Autowired
 	ImmaginiRepository imRepo;
-
+	@Autowired
+	ImageService cloudinaryImg;
 	@Autowired
 	AutomobiliRepository autoRepo;
 
@@ -28,9 +29,10 @@ public class ImgDbAutoService {
 		return imRepo.save(immagine);
 	}
 
-	public void deleteImg(UUID id) {
-		ImmaginiAutomobili immagine = imRepo.findById(id)
+	public void deleteImg(String id) {
+		ImmaginiAutomobili immagine = imRepo.findById(UUID.fromString(id))
 				.orElseThrow(() -> new BadRequestException("immaggine non trovata"));
+		cloudinaryImg.deleteImage(immagine.getIdEliminazione());
 		imRepo.delete(immagine);
 	}
 

@@ -24,7 +24,7 @@ public class UtenteService {
 	// creo l' utente
 	public Utente create(CreateUtentePayload payload) {
 
-		utenteRepo.findByEmail(payload.getEmail()).ifPresent(user -> {
+		utenteRepo.findByEmailIgnoreCase(payload.getEmail()).ifPresent(user -> {
 			throw new BadRequestException("Email " + user.getEmail() + " già utilizzata!");
 		});
 
@@ -42,7 +42,7 @@ public class UtenteService {
 	public Utente findByIdAndUpadate(String id, CreateUtentePayload body) {
 		Utente u = this.findById(id);
 		if (!u.getEmail().equals(body.getEmail()))
-			utenteRepo.findByEmail(body.getEmail()).ifPresent(user -> {
+			utenteRepo.findByEmailIgnoreCase(body.getEmail()).ifPresent(user -> {
 				throw new BadRequestException("Email " + user.getEmail() + " già utilizzata!");
 			});
 		u.setUsername(body.getUsername());
@@ -68,7 +68,7 @@ public class UtenteService {
 	}
 
 	public Utente findByEmail(String email) {
-		return this.utenteRepo.findByEmail(email)
+		return utenteRepo.findByEmailIgnoreCase(email)
 				.orElseThrow(() -> new NotFoundException("Utente con " + email + " non trovato!"));
 	}
 

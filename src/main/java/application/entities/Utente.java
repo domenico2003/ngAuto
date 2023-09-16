@@ -31,6 +31,7 @@ public class Utente implements UserDetails {
 	@Id
 	@GeneratedValue
 	private UUID id;
+
 	private String email;
 	private String password;
 	private String nome;
@@ -45,7 +46,7 @@ public class Utente implements UserDetails {
 	private boolean isAccountNonExpired;
 	private boolean isAccountNonLocked;
 
-	@OneToMany(mappedBy = "utenteRichiedente", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "utente", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<RichiesteNoleggio> richiesteEffettuate;
 
 	// costruttore
