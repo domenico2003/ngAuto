@@ -29,15 +29,14 @@ public class SecurityConfig {
 
 		http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		http.csrf(c -> c.disable());
-
-		http.authorizeHttpRequests(auth -> auth.requestMatchers("/admin/**").hasAuthority("ADMIN"));
-		http.authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.GET, "/automobili/**").authenticated());
 		http.authorizeHttpRequests(auth -> auth.requestMatchers("/auth/**").permitAll());
+		http.authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.GET, "/automobili/**").permitAll());
+		http.authorizeHttpRequests(auth -> auth.requestMatchers("/admin/**").hasAuthority("ADMIN"));
 		http.authorizeHttpRequests(auth -> auth.requestMatchers("/noleggio/**").authenticated());
 		http.authorizeHttpRequests(auth -> auth.requestMatchers("/utente/**").authenticated());
-		http.authorizeHttpRequests(auth -> auth.requestMatchers("/automobili/**").authenticated()
-				.requestMatchers(HttpMethod.POST, "/**").hasAuthority("ADMIN").requestMatchers(HttpMethod.PUT, "/**")
-				.hasAuthority("ADMIN").requestMatchers(HttpMethod.DELETE, "/**").hasAuthority("ADMIN"));
+		http.authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.POST, "/automobili/**").hasAuthority("ADMIN")
+				.requestMatchers(HttpMethod.PUT, "/automobili/**").hasAuthority("ADMIN")
+				.requestMatchers(HttpMethod.DELETE, "/automobili/**").hasAuthority("ADMIN"));
 
 		http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 		http.addFilterBefore(corsFilter, JwtFilter.class);

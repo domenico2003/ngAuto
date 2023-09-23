@@ -46,9 +46,14 @@ public class Automobili {
 	private long km;
 	@Column(length = 500)
 	private String carrozzeria;
-	private long cilindrata;
-	private int potenza_cv;
 
+	@ManyToOne
+	private Modello modello;
+	private long cilindrata;
+	private long prezzo;
+	private int potenza_cv;
+	@ManyToOne
+	private Marca marca;
 	@OneToMany(mappedBy = "autoRichiesta", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<RichiesteNoleggio> richiesteNoleggio;
 
@@ -57,20 +62,22 @@ public class Automobili {
 	@Column(length = 1500)
 	private String note;
 
-	public Automobili(Alimentazione alimentazione, Cambio cambio, Status stato, String condizione, String colore,
-			long km, String carrozzeria, long cilindrata, int potenza_cv, String note) {
+	public Automobili(Alimentazione alimentazione, long prezzo, Marca marca, Cambio cambio, Status stato,
+			String condizione, String colore, long km, String carrozzeria, Modello modello, long cilindrata,
+			int potenza_cv, String note) {
 
 		this.alimentazione = alimentazione;
 		this.cambio = cambio;
-
+		this.modello = modello;
 		this.stato = stato;
 		this.condizione = condizione;
 		this.colore = colore;
+		this.prezzo = prezzo;
 		this.km = km;
 		this.carrozzeria = carrozzeria;
 		this.cilindrata = cilindrata;
 		this.potenza_cv = potenza_cv;
-//		this.copertina = copertina;
+		this.marca = marca;
 		this.note = note;
 	}
 

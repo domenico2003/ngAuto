@@ -55,11 +55,12 @@ public class RichiesteNoleggioController {
 	@ResponseStatus(HttpStatus.OK)
 	public Page<RichiesteNoleggio> findRichiestaByCustomFilters(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "id") String ordinamento,
-			@RequestParam(required = false) String idUtenteRichiedente,
+			@RequestParam(required = false) String emailUtenteRichiedente,
 			@RequestParam(required = false) String idAutoRichiesta, @RequestParam(required = false) LocalDate daData,
 			@RequestParam(required = false) LocalDate aData) {
 
-		return rns.findRichiestaByCustomFilters(page, ordinamento, idUtenteRichiedente, idAutoRichiesta, daData, aData);
+		return rns.findRichiestaByCustomFilters(page, ordinamento, emailUtenteRichiedente, idAutoRichiesta, daData,
+				aData);
 	}
 
 	@PutMapping("/{id}")

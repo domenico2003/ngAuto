@@ -13,8 +13,10 @@ public class AutoPayload {
 	private String colore;
 	private long km;
 	private String carrozzeria;
+	private String nomeModello;
 	private long cilindrata;
 	private int potenza_cv;
 
+	private long prezzo;
 	private String note;
 }

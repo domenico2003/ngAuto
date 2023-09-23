@@ -24,7 +24,7 @@ public class ExceptionsHandler {
 	@ExceptionHandler(AccessDeniedException.class)
 	public ResponseEntity<ErrorsPayload> handleAccessDenied(AccessDeniedException e) {
 
-		ErrorsPayload payload = new ErrorsPayload("accesso negato,non hai l'autorizaazzione per accedere!", new Date(),
+		ErrorsPayload payload = new ErrorsPayload("accesso negato,non hai l'autorizazzione per accedere!", new Date(),
 				403);
 
 		return new ResponseEntity<ErrorsPayload>(payload, HttpStatus.FORBIDDEN);

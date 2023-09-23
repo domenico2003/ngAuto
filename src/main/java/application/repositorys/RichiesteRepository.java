@@ -21,7 +21,8 @@ public interface RichiesteRepository extends JpaRepository<RichiesteNoleggio, UU
 
 	Page<RichiesteNoleggio> findByAutoRichiesta(Pageable pagina, Automobili autoRichiesta);
 
-	Page<RichiesteNoleggio> findByDaDataBetween(Pageable pagina, LocalDate daData, LocalDate aData);
+	Page<RichiesteNoleggio> findByDaDataGreaterThanEqualAndFinoALessThanEqual(Pageable pagina, LocalDate daData,
+			LocalDate aData);
 
 	Page<RichiesteNoleggio> findByDaDataGreaterThanEqual(Pageable pagina, LocalDate daData);
 

@@ -69,7 +69,7 @@ public class UtenteService {
 
 	public Utente findByEmail(String email) {
 		return utenteRepo.findByEmailIgnoreCase(email)
-				.orElseThrow(() -> new NotFoundException("Utente con " + email + " non trovato!"));
+				.orElseThrow(() -> new NotFoundException("Utente con email " + email + " non trovato!"));
 	}
 
 	public void aggiungiAdmin(String email) {

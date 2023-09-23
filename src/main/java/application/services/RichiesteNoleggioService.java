@@ -82,11 +82,12 @@ public class RichiesteNoleggioService {
 
 //	metodi custom
 
-	public Page<RichiesteNoleggio> findByUtenteRichiedente(int page, String ordinamento, String idUtenteRichiedente) {
+	public Page<RichiesteNoleggio> findByUtenteRichiedente(int page, String ordinamento,
+			String emailUtenteRichiedente) {
 
 		Pageable pagina = PageRequest.of(page, 10, Sort.by(ordinamento));
 
-		Utente utenteRichiedente = us.findById(idUtenteRichiedente);
+		Utente utenteRichiedente = us.findByEmail(emailUtenteRichiedente);
 
 		return ricNolRepo.findByUtente(pagina, utenteRichiedente);
 	};
@@ -101,7 +102,7 @@ public class RichiesteNoleggioService {
 			LocalDate aData) {
 		Pageable pagina = PageRequest.of(page, 10, Sort.by(ordinamento));
 
-		return ricNolRepo.findByDaDataBetween(pagina, daData, aData);
+		return ricNolRepo.findByDaDataGreaterThanEqualAndFinoALessThanEqual(pagina, daData, aData);
 	};
 
 	public Page<RichiesteNoleggio> findByDaData(int page, String ordinamento, LocalDate daData) {
@@ -145,7 +146,7 @@ public class RichiesteNoleggioService {
 		// utente - auto
 		else if (idUtenteRichiedente != null && idAutoRichiesta != null && daData == null && aData == null) {
 
-			return ricNolRepo.findByUtenteAndAutoRichiesta(pagina, us.findById(idUtenteRichiedente),
+			return ricNolRepo.findByUtenteAndAutoRichiesta(pagina, us.findByEmail(idUtenteRichiedente),
 					auser.findById(idAutoRichiesta));
 		}
 
@@ -153,21 +154,21 @@ public class RichiesteNoleggioService {
 		else if (idAutoRichiesta != null && idUtenteRichiedente != null && daData != null && aData == null) {
 
 			return ricNolRepo.findAllByUtenteAndAutoRichiestaAndDaDataGreaterThanEqual(pagina,
-					us.findById(idUtenteRichiedente), auser.findById(idAutoRichiesta), daData);
+					us.findByEmail(idUtenteRichiedente), auser.findById(idAutoRichiesta), daData);
 		}
 
 		// utente - auto - a
 		else if (idAutoRichiesta != null && idUtenteRichiedente != null && daData == null && aData != null) {
 
 			return ricNolRepo.findAllByUtenteAndAutoRichiestaAndFinoALessThanEqual(pagina,
-					us.findById(idUtenteRichiedente), auser.findById(idAutoRichiesta), aData);
+					us.findByEmail(idUtenteRichiedente), auser.findById(idAutoRichiesta), aData);
 		}
 
 		// utente - auto - da - a
 		else if (daData != null && idUtenteRichiedente != null && idAutoRichiesta != null && aData != null) {
 
 			return ricNolRepo.findAllByUtenteAndAutoRichiestaAndDaDataGreaterThanEqualAndFinoALessThanEqual(pagina,
-					us.findById(idUtenteRichiedente), auser.findById(idAutoRichiesta), daData, aData);
+					us.findByEmail(idUtenteRichiedente), auser.findById(idAutoRichiesta), daData, aData);
 		}
 
 		// tutti
@@ -178,21 +179,21 @@ public class RichiesteNoleggioService {
 		// utente - da
 		else if (idUtenteRichiedente != null && idAutoRichiesta == null && daData != null && aData == null) {
 
-			return ricNolRepo.findAllByUtenteAndDaDataGreaterThanEqual(pagina, us.findById(idUtenteRichiedente),
+			return ricNolRepo.findAllByUtenteAndDaDataGreaterThanEqual(pagina, us.findByEmail(idUtenteRichiedente),
 					daData);
 		}
 
 		// utente - a
 		else if (idUtenteRichiedente != null && idAutoRichiesta == null && daData == null && aData != null) {
 
-			return ricNolRepo.findAllByUtenteAndFinoALessThanEqual(pagina, us.findById(idUtenteRichiedente), aData);
+			return ricNolRepo.findAllByUtenteAndFinoALessThanEqual(pagina, us.findByEmail(idUtenteRichiedente), aData);
 		}
 
 		// utente - da - a
 		else if (idAutoRichiesta == null && idUtenteRichiedente != null && daData != null && aData != null) {
 			// da fare
 			return ricNolRepo.findAllByUtenteAndDaDataGreaterThanEqualAndFinoALessThanEqual(pagina,
-					us.findById(idUtenteRichiedente), daData, aData);
+					us.findByEmail(idUtenteRichiedente), daData, aData);
 		}
 
 		// auto - da

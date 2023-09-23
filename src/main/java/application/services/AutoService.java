@@ -16,6 +16,8 @@ import application.entities.Alimentazione;
 import application.entities.Automobili;
 import application.entities.Cambio;
 import application.entities.ImmaginiAutomobili;
+import application.entities.Marca;
+import application.entities.Modello;
 import application.entities.enums.Status;
 import application.exceptions.BadRequestException;
 import application.exceptions.NotFoundException;
@@ -24,6 +26,8 @@ import application.payloads.ImagePayload;
 import application.repositorys.AlimentazioneRepository;
 import application.repositorys.AutomobiliRepository;
 import application.repositorys.CambioRepository;
+import application.repositorys.MarcaRepository;
+import application.repositorys.ModelloRepository;
 
 @Service
 public class AutoService {
@@ -33,6 +37,12 @@ public class AutoService {
 
 	@Autowired
 	CambioRepository cambioRepo;
+
+	@Autowired
+	ModelloRepository modelloRepo;
+
+	@Autowired
+	MarcaRepository marcaRepo;
 
 	@Autowired
 	AlimentazioneRepository aliRepo;
@@ -111,6 +121,16 @@ public class AutoService {
 		autoDaSalvare.setCondizione(body.getCondizione());
 		autoDaSalvare.setColore(body.getColore());
 		autoDaSalvare.setKm(body.getKm());
+		autoDaSalvare.setPrezzo(body.getPrezzo());
+
+		Modello modello = this.findByTipoModello(body.getNomeModello());
+
+		if (modello == null) {
+			throw new BadRequestException("Modello " + body.getNomeModello() + " non presente!");
+		}
+
+		autoDaSalvare.setMarca(modello.getMarca());
+		autoDaSalvare.setModello(modello);
 		autoDaSalvare.setCarrozzeria(body.getCarrozzeria());
 		autoDaSalvare.setCilindrata(body.getCilindrata());
 		autoDaSalvare.setPotenza_cv(body.getPotenza_cv());
@@ -137,6 +157,15 @@ public class AutoService {
 		autoDaSalvare.setKm(body.getKm());
 		autoDaSalvare.setCarrozzeria(body.getCarrozzeria());
 		autoDaSalvare.setCilindrata(body.getCilindrata());
+		autoDaSalvare.setPrezzo(body.getPrezzo());
+
+		Modello modello = this.findByTipoModello(body.getNomeModello());
+
+		if (modello == null) {
+			throw new BadRequestException("Modello " + body.getNomeModello() + " non presente!");
+		}
+		autoDaSalvare.setMarca(modello.getMarca());
+		autoDaSalvare.setModello(modello);
 		autoDaSalvare.setPotenza_cv(body.getPotenza_cv());
 		autoDaSalvare.setNote(body.getNote());
 		if (!body.getStato().contains("in_vendita") & !body.getStato().contains("venduta")
@@ -190,25 +219,77 @@ public class AutoService {
 		return autoRepo.findByColoreStartingWithIgnoreCase(pagina, colore);
 	};
 
-	public Page<Automobili> findAutoByCustomFilters(int page, String ordinamento, String tipoAlimentazione,
-			String tipoCambio, String condizione, String colore) {
+	public Page<Automobili> findAutoByCustomFilters(int page, String ordinamento, long prezzoMin, long prezzoMax,
+			String nomeMarca, String nomeModello, String tipoAlimentazione, String tipoCambio, String condizione,
+			String colore) {
 		Pageable pagina = PageRequest.of(page, 10, Sort.by(ordinamento));
 
-		if (tipoCambio != null & tipoAlimentazione != null) {
-			Cambio CambioTrovato = this.findCambioByNome(tipoCambio);
-			Alimentazione alimentazioneRichiesta = this.findAlimentazioneByNome(tipoAlimentazione);
-			return autoRepo.findRichiestaByCustomFilters(pagina, alimentazioneRichiesta, CambioTrovato, condizione,
-					colore);
-		} else if (tipoCambio == null & tipoAlimentazione != null) {
+//		Marca marca = null;
+//		Modello modello = null;
+//		Cambio CambioTrovato = null;
+//		Alimentazione alimentazioneRichiesta = null;
+//
+//		if (nomeMarca != null) {
+//			marca = this.findByTipoMarca(nomeMarca);
+//		}
+//
+//		if (nomeModello != null) {
+//			modello = this.findByTipoModello(nomeModello);
+//		}
+//
+//		if (tipoAlimentazione != null) {
+//
+//			alimentazioneRichiesta = this.findAlimentazioneByNome(tipoAlimentazione);
+//
+//		}
+//		if (tipoCambio != null) {
+//
+//			CambioTrovato = this.findCambioByNome(tipoCambio);
+//
+//		}
 
-			Alimentazione alimentazioneRichiesta = this.findAlimentazioneByNome(tipoAlimentazione);
-			return autoRepo.findRichiestaByCustomFilters(pagina, alimentazioneRichiesta, null, condizione, colore);
-		} else if (tipoCambio != null & tipoAlimentazione == null) {
+		return autoRepo.findRichiestaByCustomFilters(pagina, prezzoMin, prezzoMax, nomeMarca, nomeModello,
+				tipoAlimentazione, tipoCambio, condizione, colore);
+	};
 
-			Cambio CambioTrovato = this.findCambioByNome(tipoCambio);
-			return autoRepo.findRichiestaByCustomFilters(pagina, null, CambioTrovato, condizione, colore);
+//	marca e modello 
+
+	public Marca addMarca(String tipo) {
+		Marca marca = new Marca();
+		marca.setTipo(tipo);
+		return marcaRepo.save(marca);
+	};
+
+	public Marca findByTipoMarca(String tipo) {
+		return marcaRepo.findByTipoIgnoreCase(tipo);
+	}
+
+	public List<Marca> findAllMarche() {
+		return marcaRepo.findAll();
+	}
+
+	public Modello addModello(String tipo, String tipoMarca) {
+		Modello modello = new Modello();
+		modello.setTipo(tipo);
+		Marca marca = findByTipoMarca(tipoMarca);
+		if (marca != null) {
+			modello.setMarca(marca);
+			return modelloRepo.save(modello);
 		} else {
-			return autoRepo.findRichiestaByCustomFilters(pagina, null, null, condizione, colore);
+			throw new BadRequestException("Marca " + tipoMarca + " non trovata!");
 		}
 	};
+
+	public Modello findByTipoModello(String tipo) {
+		return modelloRepo.findByTipoIgnoreCase(tipo);
+	}
+
+	public List<Modello> findAllModelli() {
+		return modelloRepo.findAll();
+	}
+
+	public List<Modello> findModelloByMarche(String tipoMarca) {
+		Marca marca = this.findByTipoMarca(tipoMarca);
+		return modelloRepo.findByMarca(marca);
+	}
 }
