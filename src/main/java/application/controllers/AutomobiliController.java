@@ -105,7 +105,7 @@ public class AutomobiliController {
 	@PostMapping("/img")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@ResponseStatus(HttpStatus.OK)
-	public ImmaginiAutomobili addImmagini(@RequestBody MultipartFile file, @RequestParam String autoId)
+	public ImmaginiAutomobili addImmagini(@RequestParam MultipartFile file, @RequestParam String autoId)
 			throws IOException {
 		return autoServ.salvaImmagini(file, autoId);
 	}

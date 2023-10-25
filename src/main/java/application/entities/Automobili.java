@@ -50,6 +50,8 @@ public class Automobili {
 	@ManyToOne
 	private Modello modello;
 	private long cilindrata;
+	private long anno;
+
 	private long prezzo;
 	private int potenza_cv;
 	@ManyToOne

@@ -94,7 +94,19 @@ public class AutoService {
 	public Automobili aggiungiCopertina(String idImagine, String autoId) throws IOException {
 		ImmaginiAutomobili copertina = imgDBService.findById(idImagine);
 		Automobili auto = this.findById(autoId);
-		auto.setCopertina(copertina);
+
+		if (auto.getCopertina() == null) {
+			auto.setCopertina(copertina);
+		} else {
+			if (auto.getCopertina().getId().compareTo(copertina.getId()) != 0) {
+
+				ImagePayload immaggineSalvata = new ImagePayload(auto.getCopertina().getUrl(),
+						auto.getCopertina().getIdEliminazione());
+				imgDBService.addImmagine(immaggineSalvata, auto);
+				auto.setCopertina(copertina);
+			}
+		}
+
 		return autoRepo.save(auto);
 	}
 
@@ -135,6 +147,7 @@ public class AutoService {
 		autoDaSalvare.setCilindrata(body.getCilindrata());
 		autoDaSalvare.setPotenza_cv(body.getPotenza_cv());
 		autoDaSalvare.setNote(body.getNote());
+		autoDaSalvare.setAnno(body.getAnno());
 		if (!body.getStato().contains("in_vendita") & !body.getStato().contains("venduta")
 				& !body.getStato().contains("non_disponibile") & !body.getStato().contains("da_noleggiare")
 				& !body.getStato().contains("noleggiata")) {
@@ -168,6 +181,7 @@ public class AutoService {
 		autoDaSalvare.setModello(modello);
 		autoDaSalvare.setPotenza_cv(body.getPotenza_cv());
 		autoDaSalvare.setNote(body.getNote());
+		autoDaSalvare.setAnno(body.getAnno());
 		if (!body.getStato().contains("in_vendita") & !body.getStato().contains("venduta")
 				& !body.getStato().contains("non_disponibile") & !body.getStato().contains("da_noleggiare")
 				& !body.getStato().contains("noleggiata")) {

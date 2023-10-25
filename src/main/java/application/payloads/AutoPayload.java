@@ -16,7 +16,7 @@ public class AutoPayload {
 	private String nomeModello;
 	private long cilindrata;
 	private int potenza_cv;
-
+	private long anno;
 	private long prezzo;
 	private String note;
 }

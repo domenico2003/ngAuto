@@ -59,7 +59,7 @@ public class RichiesteNoleggioService {
 
 	public RichiesteNoleggio modificaRichiedente(String id, RichiesteNoleggioPayload body) {
 		RichiesteNoleggio Richiesta = this.findById(id);
-
+		Richiesta.setStatoRichiesta(StatoNoleggio.in_attesa);
 		Richiesta.setDaData(body.getDaData());
 		Richiesta.setFinoA(body.getAData());
 		Richiesta.setAutoRichiesta(auser.findById(body.getIdAutoRichiesta()));
